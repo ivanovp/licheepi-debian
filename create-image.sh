@@ -33,16 +33,16 @@ EOT
 
 # Mount first partition
 
-losetup -o $((512*8192)) --sizelimit 20M /dev/loop0 licheepi-debian.img
-mkfs.vfat /dev/loop0
-fatlabel /dev/loop0 BOOT
-mount -t vfat /dev/loop0 licheepi-image/BOOT
+losetup -o $((512*8192)) --sizelimit 20M /dev/loop100 licheepi-debian.img
+mkfs.vfat /dev/loop100
+fatlabel /dev/loop100 BOOT
+mount -t vfat /dev/loop100 licheepi-image/BOOT
 
 # Mount second partition
 
-losetup -o 562036736 --sizelimit 1G /dev/loop1 licheepi-debian.img
-mkfs.ext4 /dev/loop1 -L rootfs
-mount -t ext4 /dev/loop1 licheepi-image/rootfs
+losetup -o 562036736 --sizelimit 1G /dev/loop101 licheepi-debian.img
+mkfs.ext4 /dev/loop101 -L rootfs
+mount -t ext4 /dev/loop101 licheepi-image/rootfs
 
 # Make swap
 #TODO
