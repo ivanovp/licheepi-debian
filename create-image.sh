@@ -1,12 +1,18 @@
 #!/bin/bash
 
-mkdir licheepi-image
-mkdir licheepi-image/rootfs
-mkdir licheepi-image/BOOT
+sudo umount licheepi-image/boot
+sudo sudo losetup -d /dev/loop100
+sudo umount licheepi-image/rootfs
+sudo sudo losetup -d /dev/loop101
+sudo rm licheepi-debian.img
 
-dd if=/dev/zero of=licheepi-debian.img bs=1M seek=2048 count=0
+mkdir -p licheepi-image/boot
+mkdir -p licheepi-image/rootfs
+
+dd if=/dev/zero of=licheepi-debian.img bs=1M seek=1938 count=0
 
 cat << EOT | fdisk licheepi-debian.img
+o
 n
 p
 1
@@ -33,15 +39,14 @@ EOT
 
 # Mount first partition
 
-losetup -o $((512*8192)) --sizelimit 20M /dev/loop100 licheepi-debian.img
-mkfs.vfat /dev/loop100
-fatlabel /dev/loop100 BOOT
-mount -t vfat /dev/loop100 licheepi-image/BOOT
+losetup -o $((512*8192)) --sizelimit 20M --nooverlap --sector-size 512 /dev/loop100 licheepi-debian.img
+mkfs.vfat -n lichboot /dev/loop100
+mount -t vfat /dev/loop100 licheepi-image/boot
 
 # Mount second partition
 
-losetup -o 562036736 --sizelimit 1G /dev/loop101 licheepi-debian.img
-mkfs.ext4 /dev/loop101 -L rootfs
+losetup -o $((512*1097728)) --sizelimit $((512*2867200)) --nooverlap --sector-size 512 /dev/loop101 licheepi-debian.img
+mkfs.ext4 /dev/loop101 -L licheepi_root
 mount -t ext4 /dev/loop101 licheepi-image/rootfs
 
 # Make swap
