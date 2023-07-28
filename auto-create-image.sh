@@ -7,6 +7,8 @@ else
     exit 1
 fi
 echo "Cleaning directory"
+sudo sudo losetup -d /dev/loop100
+sudo sudo losetup -d /dev/loop101
 sudo rm licheepi-debian.img
 sudo rm boot.scr
 echo "Generating u-boot toolchain"
